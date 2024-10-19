@@ -20,7 +20,7 @@ def readImagePil(ImgPath) -> Image.Image:
 
 def readMaskPil(MaskPath):
     try:
-        Mask = Image.open(MaskPath)
+        Mask = Image.open(MaskPath).convert('L')
         if Mask.mode != "L" and Mask.mode != "P":
             print("Mask mode should be L or P. Got: {}".format(Mask.mode))
         return Mask

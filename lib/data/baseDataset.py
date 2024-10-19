@@ -130,9 +130,9 @@ class SegBaseDataset(CustomDataset):
     
     def getMask(self, ImgPath):
         MaksFolder = "mask"
-        ImgName = Path(ImgPath).stem
-        Ext = "png"
-        
+        ImgName = Path(ImgPath).stem + "_mask"  # for polygen
+        Ext = str(Path(ImgPath).suffix)[1:]
+
         MaskPath = "%s/%s/%s.%s" % (self.opt.dataset_path, MaksFolder, ImgName, Ext)
         return MaskPath
     

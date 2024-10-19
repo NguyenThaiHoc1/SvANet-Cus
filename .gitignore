@@ -34,3 +34,6 @@ shell/erst
 !requirements.txt
 
 !lib/data/dataset
+
+# ide
+.idea

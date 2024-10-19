@@ -25,5 +25,5 @@ class SegmentationDataset(SegBaseDataset):
         Data = self.Transform(Data)
         
         Mask = Data.pop("mask")
-        Data["label"] = Mask if Mask is not None else 0
+        Data["label"] = Mask // 255 if Mask is not None else 0
         return Data
