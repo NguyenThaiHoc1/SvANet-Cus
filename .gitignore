@@ -35,5 +35,7 @@ shell/erst
 
 !lib/data/dataset
 
-# ide
+
+exp
+dataset
 .idea
