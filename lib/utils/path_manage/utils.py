@@ -13,7 +13,7 @@ from ..weight.utils import getBestValprt
 from ..variables.defaultVar import WeightMetric
 
 
-def keepBestValRpt(FolderPath, SaveModels, ValSplit: int=None):
+def keepBestValRpt(FolderPath, SaveModels, ValSplit: int = None):
     # keep the best th validation/repetition model name
     KeepValRpt = None
     if ValSplit is not None:
@@ -25,7 +25,7 @@ def keepBestValRpt(FolderPath, SaveModels, ValSplit: int=None):
         if KeepValRpt is not None else SaveModels
     return KeepModels
 
-    
+
 def getBestModelPath(FolderPath, ValSplit=None):
     if not os.path.isdir(FolderPath):
         return ""
@@ -36,9 +36,9 @@ def getBestModelPath(FolderPath, ValSplit=None):
             return ""
         Idx = [re.findall(r"%s(\d+)" % "epoch", SaveModels[i])[0] for i in range(len(SaveModels))]
         Idx = list(map(int, Idx))
-        SortIdx = np.argsort(Idx) # needs sorting, or best index may be larger than others
+        SortIdx = np.argsort(Idx)  # needs sorting, or best index may be larger than others
         SaveModels = np.asarray(SaveModels)[SortIdx]
-        
+
         IndexTemp = SortIdx[-1]
         SaveModel = SaveModels[-1]
         while not any([m in SaveModel for m in list(WeightMetric.values())]):
@@ -57,7 +57,7 @@ def getBestModelPath(FolderPath, ValSplit=None):
                         SaveModel = SaveModels[SortIdx[-1]]
                         break
                 break
-        
+
         return FolderPath + SaveModel
 
 
@@ -65,7 +65,7 @@ def getMetaLogPath(MetaRootPath):
     Metadata = None
     for File in os.listdir(MetaRootPath):
         if File.endswith(".csv") and "log_" in File:
-            Metadata = MetaRootPath + "/" + File # /log_rotation_shuffle.csv
+            Metadata = MetaRootPath + "/" + File  # /log_rotation_shuffle.csv
             print("Metadata is %s" % Metadata)
             break
     return Metadata
@@ -84,32 +84,34 @@ def getExpPath(opt, RootPath):
                 ExpPath = RootPath
             else:
                 return None, None
-            
+
     print(("Validating in %s dataset" % opt.setname.lower()).center(WinCols, "^"))
-    
+
     ## return folder only list, sort exp in order
     Exps = next(os.walk(ExpPath))[1]
-    Exps = [e for e in Exps if "exp" in e] # keep only exp folder
+    Exps = [e for e in Exps if "exp" in e]  # keep only exp folder
     ExpNums = [int(re.findall(r"\d+", e)[0]) for e in Exps]
-    Exps = [Exps[i] for i in np.argsort(ExpNums)] # string maybe not in order
+    Exps = [Exps[i] for i in np.argsort(ExpNums)]  # string maybe not in order
     return ExpPath, Exps
 
 
 def getFilePathsFromSubFolders(WalkPath):
-    return [os.path.join(Root, File) \
-        for Root, Dirs, Files in os.walk(WalkPath) for File in Files]
+    return [
+        os.path.join(Root, File) for Root, Dirs, Files in os.walk(WalkPath) for File in Files
+    ]
 
 
 def getSubdirectories(Dir):
-    return [SubDir for SubDir in os.listdir(Dir)
-            if os.path.isdir(os.path.join(Dir, SubDir))]
+    return [
+        SubDir for SubDir in os.listdir(Dir) if os.path.isdir(os.path.join(Dir, SubDir))
+    ]
 
 
 def expFolderCreator(BaseFolder, TaskType, ExpLevel="", TargetExp=None, Mode=0):
     # Count the number of exsited experiments
-    FolderPath = "./%s/%s/%s" % (BaseFolder, TaskType, ExpLevel) 
+    FolderPath = "./%s/%s/%s" % (BaseFolder, TaskType, ExpLevel)
     Path(FolderPath).mkdir(parents=True, exist_ok=True)
-    
+
     ExpList = getSubdirectories(FolderPath)
     if TargetExp:
         ExpCount = TargetExp
@@ -120,16 +122,15 @@ def expFolderCreator(BaseFolder, TaskType, ExpLevel="", TargetExp=None, Mode=0):
             MaxNum = 0
             for idx in range(len(ExpList)):
                 NumStr = re.findall("\d+", ExpList[idx])
-                if NumStr: # should not be empty
+                if NumStr:  # should not be empty
                     temp = int(NumStr[0]) + 1
                     if MaxNum < temp:
                         MaxNum = temp
             ExpCount = MaxNum if Mode == 0 else MaxNum - 1
-    
+
     DestPath = "%s/exp%s/" % (FolderPath, str(ExpCount))
     Path(DestPath).mkdir(parents=True, exist_ok=True)
     Path(DestPath + "/model").mkdir(parents=True, exist_ok=True)
-    
     return DestPath, ExpCount
 
 
@@ -146,11 +147,11 @@ def getWeightName(MetaRow: Dict, TargetExp):
     if MixMethod:
         if MixMethod != "-":
             MixMethodStr = ("_%s%s" % (MixMethod, MixMinCropRatio.replace("0.", "")))
-    
+
     # general string
     SaveStr = ""
     IdenStr = ""
-    
+
     HeadName = ""
     if "segmentation" in MetaRow["Task"]:
         HeadName = "_" + MetaRow["SegModel"]
@@ -163,11 +164,11 @@ def getWeightName(MetaRow: Dict, TargetExp):
     SaveStr += (Loss + "_") if Loss != "cross_entropy" else ""
     # SaveStr += "_cw" if "false" not in ClassWeight.lower() else ""
     # SaveStr += "_lb" + LabelSmooth if "0" not in LabelSmooth else ""
-    
+
     SaveStr += "Exp%s" % TargetExp
-    
+
     SaveName = "%s_%s%s%s_%s%s" % (SupMethod, ModelName, HeadName, MixMethodStr, IdenStr, SaveStr)
-    
+
     return SaveName
 
 
@@ -199,7 +200,7 @@ def getOnlyFolderDirs(Path):
 def removeFoldersAndFiles(Dirs):
     if isinstance(Dirs, str):
         Dirs = [Dirs]
-    
+
     for d in Dirs:
         if os.path.isfile(d):
             os.remove(d)
@@ -212,7 +213,7 @@ def moveFiles(Files, DestPath):
     # move list of files to a destination
     if isinstance(Files, str):
         Files = [Files]
-    
+
     for f in Files:
         if os.path.isfile(f):
             # overwrite if file is existed
@@ -224,7 +225,7 @@ def renameFilesWithMap(Files, NameMap):
     # rename files with name map, one time for each string
     if isinstance(Files, str):
         Files = [Files]
-    
+
     OutFiles = deepcopy(Files)
     for i, f in enumerate(Files):
         for s, t in zip(NameMap[0], NameMap[1]):
@@ -232,7 +233,7 @@ def renameFilesWithMap(Files, NameMap):
                 # prevent from wrongly replaced digits 
                 OutFiles[i] = OutFiles[i].replace(s, t)
                 break
-    
+
     return OutFiles
 
 
@@ -247,8 +248,8 @@ def adaptValTest(DatasetPath, ValidStr=["test", "val"]):
 def getImgPath(DatasetPath, NumSplit, Mode=1, Shuffle=True):
     # Put images into train set or test set
     from sklearn.model_selection import KFold
-    
-    TrainSet, TestSet = [], [] # init
+
+    TrainSet, TestSet = [], []  # init
     if Mode == 1:
         """ Cross-validation split without class folder
         root/split1/dog_1.png
@@ -258,13 +259,13 @@ def getImgPath(DatasetPath, NumSplit, Mode=1, Shuffle=True):
         """
         for i in range(1, NumSplit + 1):
             TestSet.append(glob("%s/split%d/*" % (DatasetPath, i)))
-            
+
             TrainImgs = []
             for j in range(1, NumSplit + 1):
                 if j != i:
                     TrainImgs.extend(glob("%s/split%d/*" % (DatasetPath, j)))
             TrainSet.append(TrainImgs)
-        
+
     elif Mode == 2:
         """ No split with only class folder
         root/dog/xxx.png
@@ -277,17 +278,17 @@ def getImgPath(DatasetPath, NumSplit, Mode=1, Shuffle=True):
         TrainSet, TestSet = [[] for _ in range(NumSplit)], [[] for _ in range(NumSplit)]
         ClassNames = os.listdir(DatasetPath)
         Kf = KFold(n_splits=NumSplit, shuffle=Shuffle)
-        
+
         for ClassName in ClassNames:
             ImagePath = glob("%s/%s/*" % (DatasetPath, ClassName))
             IndexList = range(0, len(ImagePath))
 
             Kf.get_n_splits(IndexList)
-            
+
             for idx, (TrainIndexes, TestIdexes) in enumerate(Kf.split(IndexList)):
                 [TrainSet[idx].append(ImagePath[i]) for i in TrainIndexes]
                 [TestSet[idx].append(ImagePath[j]) for j in TestIdexes]
-                
+
     elif Mode == 3:
         """ Train and val/test split with class folder
         root/train/dog/xxx.png
@@ -305,10 +306,10 @@ def getImgPath(DatasetPath, NumSplit, Mode=1, Shuffle=True):
         root/test/dog/[...]/xxz.png
         """
         TrainSet = glob("%s/train/*/*" % DatasetPath)
-        
+
         Level = adaptValTest(DatasetPath, ValidStr=["test", "val"])
         TestSet = glob("%s/%s/*/*" % (DatasetPath, Level))
-        
+
     elif Mode == 4:
         """  Train and val/test split without class folder
         root/train/xxx.png
@@ -326,10 +327,10 @@ def getImgPath(DatasetPath, NumSplit, Mode=1, Shuffle=True):
         root/test/[...]/xxz.png
         """
         TrainSet = glob("%s/train/*" % DatasetPath)
-        
+
         Level = adaptValTest(DatasetPath, ValidStr=["test", "val"])
         TestSet = glob("%s/%s/*" % (DatasetPath, Level))
-        
+
     return TrainSet, TestSet
 
 
@@ -342,15 +343,15 @@ def getSetPath(TrainSet, TestSet, Split):
     else:
         TrainSet = TrainSet[Split]
         TestSet = TestSet[Split]
-    
+
     return TrainSet, TestSet
 
 
 def replacedWithMask(ImgPaths):
     import functools
-    
+
     ReplaceStrs = {
-        ".jpg": ".png", 
+        ".jpg": ".png",
         **dict.fromkeys(
             ["/train", "/val", "/test", "\\train", "\\val", "\\test"], "/mask"
         ),

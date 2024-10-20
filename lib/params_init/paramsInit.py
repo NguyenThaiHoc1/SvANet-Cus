@@ -115,8 +115,7 @@ def paramsInit(opt):
     
     if opt.weight_name:
         WeightPool = getFilePathsFromSubFolders(opt.load_model_path)
-        opt.pretrained_weight = [WeightPath for WeightPath in WeightPool \
-            if opt.weight_name in WeightPath][0]
+        opt.pretrained_weight = [WeightPath for WeightPath in WeightPool if opt.weight_name in WeightPath][0]
     else:
         opt.pretrained_weight = None
 
