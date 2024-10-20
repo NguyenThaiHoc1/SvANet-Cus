@@ -205,7 +205,8 @@ class Opts(object):
         # transfer
         self.Parser.add_argument("--lincls", action="store_true",
                                 help="Use linear classification protocol?")
-        self.Parser.add_argument("--load_model_path", default="./savemodel/",
+        self.Parser.add_argument("--load_model_path",
+                                default="./savemodel/",
                                 help="path to pretrained model")
         self.Parser.add_argument("--pretrained", type=int, default=0, 
                                 help="Use transfer learning?")

@@ -3,7 +3,7 @@ from pathlib import PurePath, Path
 
 
 # default, supplement, auto-dl, kaggle
-DEFAULT_WEIGHT_ROOT = ['./savemodel/', '../savemodel/', '../autodl-tmp/savemodel/', '../input/']
+DEFAULT_WEIGHT_ROOT = ['./savemodel', '../savemodel', '../autodl-tmp/savemodel', '../input']
 # WeightPath = '../input/pad-model/' # for kaggle
 
 
